@@ -24,3 +24,13 @@ func (c *Client) EncryptionKey(accessToken string, masterPassword string, email 
 
 	return encryptionKey, nil
 }
+
+func (c *Client) Whoami(accessToken string) (types.UserWhoamiResponse, error) {
+	var res types.UserWhoamiResponse
+	_, err := c.Get("/user/whoami", &accessToken, &res)
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
+}
