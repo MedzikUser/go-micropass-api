@@ -1,4 +1,4 @@
-package avapi
+package micropass_api
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/MedzikUser/go-avapi/utils"
+	"github.com/MedzikUser/go-micropass-api/utils"
 )
 
 type Client struct {

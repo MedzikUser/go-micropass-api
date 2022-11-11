@@ -1,4 +1,4 @@
-package avapi_test
+package micropass_api_test
 
 import (
 	"testing"

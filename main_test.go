@@ -1,10 +1,10 @@
-package avapi_test
+package micropass_api_test
 
 import (
 	"os"
 	"testing"
 
-	"github.com/MedzikUser/go-avapi"
+	micropass_api "github.com/MedzikUser/go-micropass-api"
 	"github.com/ddosify/go-faker/faker"
 )
 
@@ -19,7 +19,7 @@ var refreshToken string
 
 var encryptionKey string
 
-var client = avapi.NewClient()
+var client = micropass_api.NewClient()
 
 func TestMain(m *testing.M) {
 	if !registered {

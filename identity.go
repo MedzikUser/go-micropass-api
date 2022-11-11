@@ -1,7 +1,7 @@
-package avapi
+package micropass_api
 
 import (
-	"github.com/MedzikUser/go-avapi/types"
+	"github.com/MedzikUser/go-micropass-api/types"
 	"github.com/MedzikUser/libcrypto-go"
 	"github.com/MedzikUser/libcrypto-go/aes"
 	"github.com/MedzikUser/libcrypto-go/hash"
@@ -9,7 +9,7 @@ import (
 
 // * Endpoint /identity/token
 
-// Login - login to AwesomeVault.
+// Login - login to MicroPass.
 func (c *Client) Login(email string, password string) (*types.IdentityLoginResponse, error) {
 	emailBytes := []byte(email)
 	password = hash.Pbkdf2Hash256(password, emailBytes, PasswordIterations)
@@ -48,7 +48,7 @@ func (c *Client) RefreshToken(refreshToken string) (*types.IdentityRefreshTokenR
 
 // * Endpoint /identity/register
 
-// Register - creates a new account in AwesomeVault.
+// Register - creates a new account in MicroPass.
 func (c *Client) Register(email string, password string, passwordHint *string) error {
 	emailBytes := []byte(email)
 	password = hash.Pbkdf2Hash256(password, emailBytes, PasswordIterations)
@@ -62,7 +62,7 @@ func (c *Client) Register(email string, password string, passwordHint *string) e
 	// make one iteration of the password with a different salt
 	encKey := hash.Pbkdf2Hash256(password, encKeySalt, 1)
 
-	// encrypt the encryption key using the master password to pass it to AwesomeVault server
+	// encrypt the encryption key using the master password to pass it to MicroPass server
 	encKeyAes, err := aes.EncryptAesCbc(password, encKey)
 	if err != nil {
 		return err

@@ -1,11 +1,11 @@
-package avapi_test
+package micropass_api_test
 
 import (
 	"errors"
 	"testing"
 	"time"
 
-	"github.com/MedzikUser/go-avapi/types"
+	"github.com/MedzikUser/go-micropass-api/types"
 )
 
 var ciphersId []string

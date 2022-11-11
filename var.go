@@ -1,4 +1,4 @@
-package avapi
+package micropass_api
 
 var (
 	PasswordIterations = 100000

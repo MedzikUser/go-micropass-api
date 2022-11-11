@@ -1,11 +1,11 @@
-package avapi
+package micropass_api
 
 import (
 	"encoding/json"
 	"fmt"
 	"time"
 
-	"github.com/MedzikUser/go-avapi/types"
+	"github.com/MedzikUser/go-micropass-api/types"
 	"github.com/MedzikUser/libcrypto-go/aes"
 )
 

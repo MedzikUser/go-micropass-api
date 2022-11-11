@@ -5,7 +5,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/MedzikUser/go-avapi/types"
+	"github.com/MedzikUser/go-micropass-api/types"
 )
 
 func HttpError(r io.Reader) error {

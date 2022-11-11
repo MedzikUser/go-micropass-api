@@ -1,4 +1,4 @@
-module github.com/MedzikUser/go-avapi
+module github.com/MedzikUser/go-micropass-api
 
 go 1.18
 
