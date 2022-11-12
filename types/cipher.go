@@ -14,6 +14,11 @@ type CipherRequest struct {
 	Data string `json:"data"`
 }
 
+type CipherUpdateRequest struct {
+	Id   string `json:"id"`
+	Data string `json:"data"`
+}
+
 type CipherInsertResponse struct {
 	Id string `json:"id"`
 }

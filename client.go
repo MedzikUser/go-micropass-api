@@ -71,6 +71,30 @@ func (c *Client) Post(path string, accessToken *string, body any, v any) (*http.
 	return res, err
 }
 
+func (c *Client) Patch(path string, accessToken *string, body any, v any) (*http.Response, error) {
+	dataBytes, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+
+	// convert data bytes slice to io.Reader
+	bodyReader := bytes.NewReader(dataBytes)
+
+	url := ApiUrl + path
+	// make a request instance
+	req, err := http.NewRequest("PATCH", url, bodyReader)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+
+	// send the request and parse body
+	res, err := c.sendRequest(req, accessToken, v)
+
+	return res, err
+}
+
 func (c *Client) sendRequest(req *http.Request, accessToken *string, v any) (*http.Response, error) {
 	// add bearer authorization to the request if access token isn't nil
 	if accessToken != nil {

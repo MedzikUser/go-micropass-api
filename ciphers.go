@@ -9,7 +9,7 @@ import (
 	"github.com/MedzikUser/libcrypto-go/aes"
 )
 
-func (c *Client) InsertCipher(accessToken string, cipher types.Cipher, encryptionKey string) (string, error) {
+func (c *Client) InsertCipher(accessToken string, encryptionKey string, cipher types.Cipher) (string, error) {
 	var cipherId string
 
 	cipherBytes, err := json.Marshal(cipher)
@@ -60,6 +60,31 @@ func (c *Client) TakeCipher(accessToken string, encryptionKey string, id string)
 	cipher.Id = &res.Id
 
 	return &cipher, nil
+}
+
+func (c *Client) UpdateCipher(accessToken string, encryptionKey string, id string, cipher types.Cipher) error {
+	cipherBytes, err := json.Marshal(cipher)
+	if err != nil {
+		return err
+	}
+	clearText := string(cipherBytes)
+
+	cipherText, err := aes.EncryptAesCbc(encryptionKey, clearText)
+	if err != nil {
+		return err
+	}
+
+	body := types.CipherUpdateRequest{
+		Id:   id,
+		Data: cipherText,
+	}
+
+	_, err = c.Patch("/ciphers/update", &accessToken, body, nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *Client) DeleteCipher(accessToken string, id string) error {

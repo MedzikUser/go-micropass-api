@@ -13,7 +13,7 @@ var ciphers []types.Cipher
 
 func TestCiphersList(t *testing.T) {
 	// insert cipher
-	if err := testInsert(); err != nil {
+	if err := insertCipher(); err != nil {
 		t.Error(err)
 	}
 
@@ -24,6 +24,11 @@ func TestCiphersList(t *testing.T) {
 
 	// sync ciphers
 	if err := syncCiphers(); err != nil {
+		t.Error(err)
+	}
+
+	// update cipher
+	if err := updateCipher(); err != nil {
 		t.Error(err)
 	}
 
@@ -45,17 +50,17 @@ func TestCiphersList(t *testing.T) {
 	}
 }
 
-func testInsert() error {
+func insertCipher() error {
 	fakeUsername, fakePassword := fakeData()
 
 	cipher := types.Cipher{
 		Type:     types.CipherTypeAccount,
-		Name:     "test",
+		Name:     "Example",
 		Username: &fakeUsername,
 		Password: &fakePassword,
 	}
 
-	_, err := client.InsertCipher(accessToken, cipher, encryptionKey)
+	_, err := client.InsertCipher(accessToken, encryptionKey, cipher)
 	if err != nil {
 		return err
 	}
@@ -87,6 +92,24 @@ func syncCiphers() error {
 
 	if len(ciphersSync) != 0 {
 		return errors.New("failed to sync ciphers (this should not return any cipher).")
+	}
+
+	return nil
+}
+
+func updateCipher() error {
+	fakeUsername, fakePassword := fakeData()
+
+	cipher := types.Cipher{
+		Type:     types.CipherTypeAccount,
+		Name:     "Example",
+		Username: &fakeUsername,
+		Password: &fakePassword,
+	}
+
+	err := client.UpdateCipher(accessToken, encryptionKey, ciphersId[0], cipher)
+	if err != nil {
+		return err
 	}
 
 	return nil
