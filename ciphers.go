@@ -9,6 +9,7 @@ import (
 	"github.com/MedzikUser/libcrypto-go/aes"
 )
 
+// InsertCipher inserts a new cipher.
 func (c *Client) InsertCipher(accessToken string, encryptionKey string, cipher types.Cipher) (string, error) {
 	var cipherId string
 
@@ -38,6 +39,7 @@ func (c *Client) InsertCipher(accessToken string, encryptionKey string, cipher t
 	return cipherId, nil
 }
 
+// TakeCipher returns a cipher.
 func (c *Client) TakeCipher(accessToken string, encryptionKey string, id string) (*types.Cipher, error) {
 	var cipher types.Cipher
 
@@ -62,6 +64,7 @@ func (c *Client) TakeCipher(accessToken string, encryptionKey string, id string)
 	return &cipher, nil
 }
 
+// UpdateCipher updates a cipher.
 func (c *Client) UpdateCipher(accessToken string, encryptionKey string, id string, cipher types.Cipher) error {
 	cipherBytes, err := json.Marshal(cipher)
 	if err != nil {
@@ -87,6 +90,7 @@ func (c *Client) UpdateCipher(accessToken string, encryptionKey string, id strin
 	return nil
 }
 
+// DeleteCipher deletes a cipher.
 func (c *Client) DeleteCipher(accessToken string, id string) error {
 	_, err := c.Delete("/ciphers/delete/"+id, &accessToken, nil)
 	if err != nil {
@@ -96,6 +100,7 @@ func (c *Client) DeleteCipher(accessToken string, id string) error {
 	return nil
 }
 
+// ListCiphers returns a list of ciphers.
 func (c *Client) ListCiphers(accessToken string, lastSync *time.Time) ([]string, error) {
 	var ciphers []string
 

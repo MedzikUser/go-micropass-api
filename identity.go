@@ -9,7 +9,7 @@ import (
 
 // * Endpoint /identity/token
 
-// Login - login to MicroPass.
+// Login - returns an user access token.
 func (c *Client) Login(email string, password string) (*types.IdentityLoginResponse, error) {
 	emailBytes := []byte(email)
 	password = hash.Pbkdf2Hash256(password, emailBytes, PasswordIterations)
@@ -30,7 +30,7 @@ func (c *Client) Login(email string, password string) (*types.IdentityLoginRespo
 	return &res, nil
 }
 
-// RefreshToken - returns a new access token.
+// RefreshToken - refreshes the access token.
 func (c *Client) RefreshToken(refreshToken string) (*types.IdentityRefreshTokenResponse, error) {
 	body := types.IdentityTokenRequest{
 		GrantType:    types.IdentityGrantTypeAccessToken,
@@ -48,7 +48,7 @@ func (c *Client) RefreshToken(refreshToken string) (*types.IdentityRefreshTokenR
 
 // * Endpoint /identity/register
 
-// Register - creates a new account in MicroPass.
+// Register creates a new user.
 func (c *Client) Register(email string, password string, passwordHint *string) error {
 	emailBytes := []byte(email)
 	password = hash.Pbkdf2Hash256(password, emailBytes, PasswordIterations)

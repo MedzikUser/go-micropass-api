@@ -13,12 +13,14 @@ type Client struct {
 	Http *http.Client
 }
 
+// NewClient creates a new http client instance.
 func NewClient() *Client {
 	return &Client{
 		Http: new(http.Client),
 	}
 }
 
+// Get sends a GET request to the API.
 func (c *Client) Get(path string, accessToken *string, v any) (*http.Response, error) {
 	url := ApiUrl + path
 	// make a request instance
@@ -33,6 +35,7 @@ func (c *Client) Get(path string, accessToken *string, v any) (*http.Response, e
 	return res, err
 }
 
+// Delete sends a DELETE request to the API.
 func (c *Client) Delete(path string, accessToken *string, v any) (*http.Response, error) {
 	url := ApiUrl + path
 	// make a request instance
@@ -47,6 +50,7 @@ func (c *Client) Delete(path string, accessToken *string, v any) (*http.Response
 	return res, err
 }
 
+// Post sends a POST request to the API.
 func (c *Client) Post(path string, accessToken *string, body any, v any) (*http.Response, error) {
 	dataBytes, err := json.Marshal(body)
 	if err != nil {
@@ -71,6 +75,7 @@ func (c *Client) Post(path string, accessToken *string, body any, v any) (*http.
 	return res, err
 }
 
+// Patch sends a PATCH request to the API.
 func (c *Client) Patch(path string, accessToken *string, body any, v any) (*http.Response, error) {
 	dataBytes, err := json.Marshal(body)
 	if err != nil {
@@ -95,6 +100,7 @@ func (c *Client) Patch(path string, accessToken *string, body any, v any) (*http
 	return res, err
 }
 
+// sendRequest is a helper function for sending requests to the API.
 func (c *Client) sendRequest(req *http.Request, accessToken *string, v any) (*http.Response, error) {
 	// add bearer authorization to the request if access token isn't nil
 	if accessToken != nil {

@@ -8,6 +8,7 @@ import (
 	"github.com/MedzikUser/go-micropass-api/types"
 )
 
+// HttpError parse the error message returned by the API.
 func HttpError(r io.Reader) error {
 	body, err := io.ReadAll(r)
 	if err != nil {
