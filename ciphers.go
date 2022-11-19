@@ -117,7 +117,7 @@ func (c *Client) ListCiphers(accessToken string, lastSync *time.Time) ([]string,
 		return ciphers, err
 	}
 
-	ciphers = res.Ciphers
+	ciphers = res.Updated
 
 	return ciphers, nil
 }

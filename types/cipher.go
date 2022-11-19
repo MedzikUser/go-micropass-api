@@ -31,7 +31,8 @@ type CipherTakeResponse struct {
 }
 
 type CipherListResponse struct {
-	Ciphers []string `json:"ciphers"`
+	Updated []string `json:"updated"`
+	Deleted []string `json:"deleted"`
 }
 
 var (
