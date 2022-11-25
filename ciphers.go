@@ -1,25 +1,17 @@
 package micropass_api
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 
 	"github.com/MedzikUser/go-micropass-api/types"
-	"github.com/MedzikUser/libcrypto-go/aes"
 )
 
 // InsertCipher inserts a new cipher.
-func (c *Client) InsertCipher(accessToken string, encryptionKey string, cipher types.Cipher) (string, error) {
+func (c *Client) InsertCipher(accessToken string, encryptionKey string, cipher types.CipherData) (string, error) {
 	var cipherId string
 
-	cipherBytes, err := json.Marshal(cipher)
-	if err != nil {
-		return cipherId, err
-	}
-	clearText := string(cipherBytes)
-
-	cipherText, err := aes.EncryptAesCbc(encryptionKey, clearText)
+	cipherText, err := cipher.MarshalEncrypt(encryptionKey)
 	if err != nil {
 		return cipherId, err
 	}
@@ -41,7 +33,7 @@ func (c *Client) InsertCipher(accessToken string, encryptionKey string, cipher t
 
 // TakeCipher returns a cipher.
 func (c *Client) TakeCipher(accessToken string, encryptionKey string, id string) (*types.Cipher, error) {
-	var cipher types.Cipher
+	var cipherData types.CipherData
 
 	var res types.CipherTakeResponse
 	_, err := c.Get("/ciphers/get/"+id, &accessToken, &res)
@@ -49,30 +41,23 @@ func (c *Client) TakeCipher(accessToken string, encryptionKey string, id string)
 		return nil, err
 	}
 
-	cipherDataString, err := aes.DecryptAesCbc(encryptionKey, res.Data)
+	err = cipherData.UnmarshalEncrypt(encryptionKey, res.Data)
 	if err != nil {
 		return nil, err
 	}
 
-	err = json.Unmarshal([]byte(cipherDataString), &cipher)
-	if err != nil {
-		return nil, err
+	cipher := types.Cipher{
+		Id:        res.Id,
+		Directory: res.Directory,
+		Data:      cipherData,
 	}
-
-	cipher.Id = &res.Id
 
 	return &cipher, nil
 }
 
 // UpdateCipher updates a cipher.
-func (c *Client) UpdateCipher(accessToken string, encryptionKey string, id string, cipher types.Cipher) error {
-	cipherBytes, err := json.Marshal(cipher)
-	if err != nil {
-		return err
-	}
-	clearText := string(cipherBytes)
-
-	cipherText, err := aes.EncryptAesCbc(encryptionKey, clearText)
+func (c *Client) UpdateCipher(accessToken string, encryptionKey string, id string, cipher types.CipherData) error {
+	cipherText, err := cipher.MarshalEncrypt(encryptionKey)
 	if err != nil {
 		return err
 	}
