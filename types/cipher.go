@@ -15,13 +15,28 @@ type Cipher struct {
 	UpdatedAt string `json:"updated,omitempty"`
 }
 
-type CipherData struct {
-	Type        int               `json:"type"`
-	Name        string            `json:"name"`
-	Note        *string           `json:"note,omitempty"`
-	Fields      map[string]string `json:"fields,omitempty"`
-	TypedFields CipherTypedFields `json:"-"`
+type EncryptedCipher struct {
+	Id        string `json:"id"`
+	Favorite  bool   `json:"favorite"`
+	Directory string `json:"dir"`
+	Data      string `json:"data"`
+	CreatedAt string `json:"created,omitempty"`
+	UpdatedAt string `json:"updated,omitempty"`
 }
+
+type CipherData struct {
+	Type        int                `json:"type"`
+	Name        string             `json:"name"`
+	Note        *string            `json:"note,omitempty"`
+	Fields      CipherFieldTypeMap `json:"fields,omitempty"`
+	TypedFields CipherTypedFields  `json:"-"`
+}
+
+type CipherFieldType = struct {
+	Type  int    `json:"typ"`
+	Value string `json:"val"`
+}
+type CipherFieldTypeMap = map[string]CipherFieldType
 
 type CipherTypedFields struct {
 	Username string
@@ -30,32 +45,100 @@ type CipherTypedFields struct {
 	URL      string
 }
 
+func (cipher *Cipher) Unmarshal(data string) error {
+	err := json.Unmarshal([]byte(data), cipher)
+	if err != nil {
+		return err
+	}
+
+	cipher.Data.UnmarshalFields()
+
+	return nil
+}
+
+func (cipher *Cipher) UnmarshalEncrypt(data string, encryptionKey string) error {
+	encCipher := EncryptedCipher{}
+	err := json.Unmarshal([]byte(data), &encCipher)
+	if err != nil {
+		return err
+	}
+
+	cipher.Id = encCipher.Id
+	cipher.Favorite = encCipher.Favorite
+	cipher.Directory = encCipher.Directory
+	cipher.CreatedAt = encCipher.CreatedAt
+	cipher.UpdatedAt = encCipher.UpdatedAt
+	err = cipher.Data.UnmarshalEncrypt(encryptionKey, encCipher.Data)
+	if err != nil {
+		return err
+	}
+
+	cipher.Data.UnmarshalFields()
+
+	return nil
+}
+
+func (cipher *Cipher) MarshalEncrypt(data string, encryptionKey string) error {
+	encCipher := EncryptedCipher{
+		Id:        cipher.Id,
+		Favorite:  cipher.Favorite,
+		Directory: cipher.Directory,
+		CreatedAt: cipher.CreatedAt,
+		UpdatedAt: cipher.UpdatedAt,
+	}
+	err := json.Unmarshal([]byte(data), &encCipher)
+	if err != nil {
+		return err
+	}
+
+	encCipher.Data, err = cipher.Data.MarshalEncrypt(encryptionKey)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // MarshalFields converts typed fields to custom fields.
 func (cipher *CipherData) MarshalFields() {
 	if cipher.Fields == nil {
-		cipher.Fields = map[string]string{}
+		cipher.Fields = CipherFieldTypeMap{}
 	}
 
 	if cipher.TypedFields.Username != "" {
-		cipher.Fields["user"] = cipher.TypedFields.Username
+		cipher.Fields["user"] = CipherFieldType{
+			Type:  -1,
+			Value: cipher.TypedFields.Username,
+		}
 	}
 
 	if cipher.TypedFields.Password != "" {
-		cipher.Fields["pass"] = cipher.TypedFields.Password
+		cipher.Fields["pass"] = CipherFieldType{
+			Type:  -1,
+			Value: cipher.TypedFields.Password,
+		}
 	}
 
 	if cipher.TypedFields.OTPAuth != "" {
-		cipher.Fields["otpauth"] = cipher.TypedFields.OTPAuth
+		cipher.Fields["otpauth"] = CipherFieldType{
+			Type:  -1,
+			Value: cipher.TypedFields.OTPAuth,
+		}
 	}
 
 	if cipher.TypedFields.URL != "" {
-		cipher.Fields["url"] = cipher.TypedFields.URL
+		cipher.Fields["url"] = CipherFieldType{
+			Type:  -1,
+			Value: cipher.TypedFields.URL,
+		}
 	}
 }
 
 // UnmarshalFields converts custom fields to typed fields.
 func (cipher *CipherData) UnmarshalFields() {
 	for k, v := range cipher.Fields {
+		v := v.Value
+
 		switch k {
 		case "user":
 			cipher.TypedFields.Username = v
